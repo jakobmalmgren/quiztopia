@@ -1,0 +1,82 @@
+# "org" ensures this Service is used with the correct Serverless Framework Access Key.
+org: jakobjavascript24
+# "service" is the name of this project. This will also be added to your AWS resource names.
+service: quiztopia
+
+provider:
+  name: aws
+  runtime: nodejs20.x
+  region: eu-north-1
+  #policy ska ja skapa här med sen!!
+  # Uncomment to easily set up a custom domain. Read the docs for more details:
+  # https://www.serverless.com/framework/docs/providers/aws/guide/domains
+  # domain: api.example.com
+
+functions:
+  createUser:
+    handler: ./functions/createUser/index.handler
+    events:
+      - http:
+          path: /api/auth/signup
+          method: post
+
+  logInUser:
+    handler: ./functions/logInUser/index.handler
+    events:
+      - http:
+          path: /api/auth/login
+          method: post
+
+  createQuiz:
+    handler: ./functions/createQuiz/index.handler
+    events:
+      - http:
+          path: /api/quiz
+          method: post
+
+  addQuestionsToQuiz:
+    handler: ./functions/addQuestionsToQuiz/index.handler
+    events:
+      - http:
+          path: /api/quiz/question
+          method: post
+
+  getAllQuizes:
+    handler: ./functions/getAllQuizes/index.handler
+    events:
+      - http:
+          path: /api/quiz
+          method: get
+
+  getSpecifikQuiz:
+    handler: ./functions/getSpecifikQuiz/index.handler
+    events:
+      - http:
+          path: /api/quiz/{quizId}
+          method: get
+
+          #måsta ha userid o skicka in samtidigt som quizid
+
+  deleteQuiz:
+    handler: ./functions/deleteQuiz/index.handler
+    events:
+      - http:
+          path: /api/quiz/{quizId}
+          method: delete
+resources:
+  Resources:
+    QuizTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: QuizTable
+        AttributeDefinitions:
+          - AttributeName: pk
+            AttributeType: S
+          - AttributeName: sk
+            AttributeType: S
+        KeySchema:
+          - AttributeName: pk
+            KeyType: HASH
+          - AttributeName: sk
+            KeyType: RANGE
+        BillingMode: PAY_PER_REQUEST
