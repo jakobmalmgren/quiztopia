@@ -56,14 +56,14 @@ functions:
       - http:
           path: /api/quiz/{quizId}
           method: get
-
-          #måsta ha userid o skicka in samtidigt som quizid
+  # här...
+  #måsta ha userid o skicka in samtidigt som quizid
 
   deleteQuiz:
     handler: ./functions/deleteQuiz/index.handler
     events:
       - http:
-          path: /api/quiz/{quizId}
+          path: /api/quiz/{userId}/{quizId}
           method: delete
 resources:
   Resources:
@@ -76,9 +76,19 @@ resources:
             AttributeType: S
           - AttributeName: sk
             AttributeType: S
+          - AttributeName: entityType
+            AttributeType: S
         KeySchema:
           - AttributeName: pk
             KeyType: HASH
           - AttributeName: sk
             KeyType: RANGE
+        GlobalSecondaryIndexes:
+          - IndexName: EntityTypeIndex
+            KeySchema:
+              - AttributeName: entityType
+                KeyType: HASH
+              # Sort key är valfri, t.ex. sk eller quizName
+            Projection:
+              ProjectionType: ALL
         BillingMode: PAY_PER_REQUEST

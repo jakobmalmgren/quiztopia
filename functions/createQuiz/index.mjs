@@ -12,11 +12,16 @@ import { v4 as uuidv4 } from "uuid";
 
 // de ska og skiccas me ID från skapa quiz..
 
+// måse se så ja är inloggad på denna annan kan ja ej skapa quiz!!!!!!!!!!!!!!!
+
 const createQuizHandler = async (event) => {
   try {
     //checkar me mitt validatorschema så de finns och hur de ska skrivas
     const { quizName } = event.body;
-
+    //
+    //checkar ja sen så ja bara kan skapa
+    // event.user.userId;                nåt ja ända där!?!!!+
+    //
     const id = uuidv4();
 
     const putItemCommand = new PutItemCommand({

@@ -6,12 +6,15 @@ import { v4 as uuidv4 } from "uuid";
 import createError from "http-errors";
 import { verifyToken } from "../../middlewares/authHandler.mjs";
 import { errorHandler } from "../../middlewares/errorHandler.mjs";
-import { GetItemCommand, PutItemCommand } from "@aws-sdk/client-dynamodb";
+import {
+  GetItemCommand,
+  PutItemCommand,
+  QueryCommand,
+} from "@aws-sdk/client-dynamodb";
 import { client } from "../../utils/dbClient.mjs";
 import { addQuestionToQuizSchema } from "../../schemas/addQuestionsToQuizSchema.mjs";
 
 const addQuestionToQuizHandler = async (event) => {
-  console.log("event i addqusion.!!!!!", event);
   try {
     const pkUserId = event.user.userId;
     const id = uuidv4();
@@ -29,7 +32,6 @@ const addQuestionToQuizHandler = async (event) => {
         sk: { S: `QUIZ#${quizId}` },
       },
     });
-    console.log("HEJJ!!!!", getItemCommand);
 
     const quizItem = await client.send(getItemCommand);
 
@@ -55,13 +57,35 @@ const addQuestionToQuizHandler = async (event) => {
         },
       },
     });
-    await client.send(putItemCommand);
 
+    await client.send(putItemCommand);
+    //
+    const getQuizCommand = new QueryCommand({
+      TableName: "QuizTable",
+      KeyConditionExpression: "pk = :pk and begins_with(sk, :sk)",
+      ExpressionAttributeValues: {
+        ":pk": { S: `QUIZ#${quizId}` },
+        ":sk": { S: "QUESTION#" },
+      },
+    });
+
+    const result = await client.send(getQuizCommand);
+    console.log("RESULLLLLLööö", result);
+
+    //
     return {
       statusCode: 200,
       body: JSON.stringify({
         message: "added question in quiz succesfully!",
         success: true,
+        question: question,
+        answer: answer,
+        location: {
+          longitude: longitude,
+          latitude: latitude,
+          userId: pkUserId,
+          data: result.Items,
+        },
       }),
     };
   } catch (error) {
