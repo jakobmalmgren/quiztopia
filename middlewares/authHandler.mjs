@@ -12,8 +12,6 @@ export const verifyToken = () => {
         throw new createError.Unauthorized("Missing token");
       }
       const token = authHeader.replace("Bearer ", "");
-      // kolla om ja måste ha de..för måstte väl kolla me
-      // OM DE FINNS ME SÅ DE E FEL TOKEN!!!!!!!!!!!!!!!!!!!!!!!
       // if (!token) {
       //   throw new createError.Unauthorized("Missing token");
       // }

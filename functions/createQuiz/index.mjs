@@ -14,7 +14,8 @@ const createQuizHandler = async (event) => {
   try {
     //checkar me mitt validatorschema så de finns och hur de ska skrivas
     const { quizName } = event.body;
-    console.log("EVENTTT!!!!:", event.user);
+    // de som ja får me o skickar vidare från min authhandler, event.user
+
     const id = uuidv4();
 
     const putItemCommand = new PutItemCommand({
