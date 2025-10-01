@@ -7,12 +7,35 @@ import { verifyToken } from "../../middlewares/authHandler.mjs";
 import { errorHandler } from "../../middlewares/errorHandler.mjs";
 import { deleteQuizSchema } from "../../schemas/deleteQuizSchema.mjs";
 import httpJsonBodyParser from "@middy/http-json-body-parser";
-import { DeleteItemCommand } from "@aws-sdk/client-dynamodb";
+import { DeleteItemCommand, GetItemCommand } from "@aws-sdk/client-dynamodb";
 
 const deleteQuizHandler = async (event) => {
   try {
     const { quizId } = event.pathParameters;
+
+    // från jwt
     const pkUserId = event.user.userId;
+
+    /////////////////
+
+    //checkar ja sen så ja bara kan radera de som är i mitt
+    // jwt pk: { S: pkUserId }, mot sk: { S: `QUIZ#${quizId}` },
+
+    const getItemCommand = new GetItemCommand({
+      TableName: "QuizTable",
+      Key: {
+        pk: { S: pkUserId },
+        sk: { S: `QUIZ#${quizId}` },
+      },
+    });
+
+    const quizItem = await client.send(getItemCommand);
+
+    if (!quizItem.Item) {
+      throw new createError.Forbidden("Du får bara ändra dina egna quiz");
+    }
+
+    ///////////////
 
     const deleteItemCommand = new DeleteItemCommand({
       TableName: "QuizTable",

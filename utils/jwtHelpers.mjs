@@ -5,7 +5,8 @@ import dotenv from "dotenv";
 dotenv.config();
 
 export const signToken = (payload) => {
-  return jwt.sign(payload, process.env.MY_SECRET_KEY, { expiresIn: "1h" });
+  return jwt.sign(payload, process.env.MY_SECRET_KEY);
+  // return jwt.sign(payload, process.env.MY_SECRET_KEY, { expiresIn: "1h" });
 };
 
 // export const verifyToken = (event) => {

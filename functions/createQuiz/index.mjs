@@ -10,17 +10,19 @@ import { errorHandler } from "../../middlewares/errorHandler.mjs";
 import { verifyToken } from "../../middlewares/authHandler.mjs";
 import { v4 as uuidv4 } from "uuid";
 
+// de ska og skiccas me ID från skapa quiz..
+
 const createQuizHandler = async (event) => {
   try {
     //checkar me mitt validatorschema så de finns och hur de ska skrivas
     const { quizName } = event.body;
-    // de som ja får me o skickar vidare från min authhandler, event.user
 
     const id = uuidv4();
 
     const putItemCommand = new PutItemCommand({
       TableName: "QuizTable",
       Item: {
+        // de som ja får me o skickar vidare från min authhandler, event.user
         pk: { S: event.user.userId },
         sk: { S: `QUIZ#${id}` },
         entityType: { S: "QUIZ" },
@@ -35,6 +37,9 @@ const createQuizHandler = async (event) => {
       statusCode: 200,
       body: JSON.stringify({
         message: "quiz added successfully!",
+        success: true,
+        id: id,
+        quizName: quizName,
       }),
     };
   } catch (error) {
