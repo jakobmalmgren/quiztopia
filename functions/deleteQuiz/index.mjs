@@ -61,7 +61,7 @@ const deleteQuizHandler = async (event) => {
       throw new createError.NotFound(`quiz med ID ${quizId} not found!`);
     }
 
-    /// deltar quiz samt raderar frågorna under de!
+    /// deltar quiz samt raderar frågorna under de! kolla mer!!!!!
     const queryQuestionsCommand = new QueryCommand({
       TableName: "QuizTable",
       KeyConditionExpression: "pk = :pk AND begins_with(sk, :skPrefix)",
