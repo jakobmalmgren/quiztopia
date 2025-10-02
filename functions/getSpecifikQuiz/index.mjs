@@ -11,13 +11,6 @@ const getSpecificQuizHandler = async (event) => {
   try {
     const { quizId } = event.pathParameters;
     const userId = event.queryStringParameters.userId;
-    // const getItemcCommand = new GetItemCommand({
-    //   TableName: "QuizTable",
-    //   Key: {
-    //     pk: { S: `USER#${userId}` }, // användarens PK
-    //     sk: { S: `QUIZ#${quizId}` }, // quizets SK
-    //   },
-    // });
 
     const getItemcCommand = new GetItemCommand({
       TableName: "QuizTable",
@@ -39,9 +32,7 @@ const getSpecificQuizHandler = async (event) => {
       },
     });
 
-    // const result = await client.send(getItemcCommand);
     const result = await client.send(queryCommand);
-    // console.log("RESULÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖ,", result);
 
     return {
       statusCode: 200,

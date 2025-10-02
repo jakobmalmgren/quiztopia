@@ -6,7 +6,6 @@ import createError from "http-errors";
 import { verifyToken } from "../../middlewares/authHandler.mjs";
 import { errorHandler } from "../../middlewares/errorHandler.mjs";
 import { deleteQuizSchema } from "../../schemas/deleteQuizSchema.mjs";
-// import httpJsonBodyParser from "@middy/http-json-body-parser";
 import {
   DeleteItemCommand,
   GetItemCommand,
@@ -36,7 +35,9 @@ const deleteQuizHandler = async (event) => {
     const quizItem = await client.send(getItemCommand);
 
     if (!quizItem.Item) {
-      throw new createError.Forbidden("Du får bara ändra dina egna quiz");
+      throw new createError.NotFound(
+        `Quiz med ID ${quizId} finns inte eller du äger det inte`
+      );
     }
 
     ///////////////
@@ -106,6 +107,5 @@ const deleteQuizHandler = async (event) => {
 
 export const handler = middy(deleteQuizHandler)
   .use(verifyToken())
-  // .use(httpJsonBodyParser())
   .use(validator({ eventSchema: transpileSchema(deleteQuizSchema) }))
   .use(errorHandler());

@@ -19,9 +19,6 @@ const createQuizHandler = async (event) => {
     //checkar me mitt validatorschema så de finns och hur de ska skrivas
     const { quizName } = event.body;
     //
-    //checkar ja sen så ja bara kan skapa
-    // event.user.userId;                nåt ja ända där!?!!!+
-    //
     const id = uuidv4();
 
     const putItemCommand = new PutItemCommand({

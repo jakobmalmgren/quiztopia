@@ -36,16 +36,17 @@ const addQuestionToQuizHandler = async (event) => {
     const quizItem = await client.send(getItemCommand);
 
     if (!quizItem.Item) {
-      throw new createError.Forbidden("Du får bara ändra dina egna quiz");
+      // throw new createError.Forbidden("Du får bara ändra dina egna quiz");
+      throw new createError.NotFound(
+        `Quiz med ID ${quizId} finns inte eller du äger det inte`
+      );
     }
 
     const putItemCommand = new PutItemCommand({
       TableName: "QuizTable",
       Item: {
-        // ska ja göra såhär?? för
         pk: { S: `QUIZ#${quizId}` },
         sk: { S: `QUESTION#${id}` },
-        // name: { S: quizName },
         entityType: { S: "QUESTION" },
         question: { S: question },
         answer: { S: answer },
