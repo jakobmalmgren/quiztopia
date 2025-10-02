@@ -4,29 +4,51 @@ import validator from "@middy/validator";
 import { client } from "../../utils/dbClient.mjs";
 import createError from "http-errors";
 import { errorHandler } from "../../middlewares/errorHandler.mjs";
-import httpJsonBodyParser from "@middy/http-json-body-parser";
 import { getSpecificQuizSchema } from "../../schemas/getSpecifikQuizSchema.mjs";
-import { GetItemCommand } from "@aws-sdk/client-dynamodb";
+import { GetItemCommand, QueryCommand } from "@aws-sdk/client-dynamodb";
 
 const getSpecificQuizHandler = async (event) => {
   try {
     const { quizId } = event.pathParameters;
     const userId = event.queryStringParameters.userId;
+    // const getItemcCommand = new GetItemCommand({
+    //   TableName: "QuizTable",
+    //   Key: {
+    //     pk: { S: `USER#${userId}` }, // användarens PK
+    //     sk: { S: `QUIZ#${quizId}` }, // quizets SK
+    //   },
+    // });
+
     const getItemcCommand = new GetItemCommand({
       TableName: "QuizTable",
       Key: {
-        pk: { S: `USER#${userId}` }, // användarens PK
-        sk: { S: `QUIZ#${quizId}` }, // quizets SK
+        pk: { S: `USER#${userId}` },
+        sk: { S: `QUIZ#${quizId}` },
       },
     });
 
-    const result = await client.send(getItemcCommand);
-    console.log("RESULÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖ,", result);
+    const getResult = await client.send(getItemcCommand);
+    console.log("GEEEEEEEEEE", getResult);
+
+    const queryCommand = new QueryCommand({
+      TableName: "QuizTable",
+      KeyConditionExpression: "pk = :pk AND begins_with(sk, :skPrefix)",
+      ExpressionAttributeValues: {
+        ":pk": { S: `QUIZ#${quizId}` },
+        ":skPrefix": { S: "QUESTION#" },
+      },
+    });
+
+    // const result = await client.send(getItemcCommand);
+    const result = await client.send(queryCommand);
+    // console.log("RESULÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖÖ,", result);
 
     return {
       statusCode: 200,
       body: JSON.stringify({
         message: "get specific quiz, successfully arrived!",
+        quiz: result.Items,
+        moreInfo: getResult.Item,
       }),
     };
   } catch (error) {
@@ -41,6 +63,5 @@ const getSpecificQuizHandler = async (event) => {
 };
 
 export const handler = middy(getSpecificQuizHandler)
-  .use(httpJsonBodyParser())
   .use(validator({ eventSchema: transpileSchema(getSpecificQuizSchema) }))
   .use(errorHandler());

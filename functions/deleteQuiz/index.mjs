@@ -6,8 +6,12 @@ import createError from "http-errors";
 import { verifyToken } from "../../middlewares/authHandler.mjs";
 import { errorHandler } from "../../middlewares/errorHandler.mjs";
 import { deleteQuizSchema } from "../../schemas/deleteQuizSchema.mjs";
-import httpJsonBodyParser from "@middy/http-json-body-parser";
-import { DeleteItemCommand, GetItemCommand } from "@aws-sdk/client-dynamodb";
+// import httpJsonBodyParser from "@middy/http-json-body-parser";
+import {
+  DeleteItemCommand,
+  GetItemCommand,
+  QueryCommand,
+} from "@aws-sdk/client-dynamodb";
 
 const deleteQuizHandler = async (event) => {
   try {
@@ -56,6 +60,32 @@ const deleteQuizHandler = async (event) => {
       throw new createError.NotFound(`quiz med ID ${quizId} not found!`);
     }
 
+    /// deltar quiz samt raderar frågorna under de!
+    const queryQuestionsCommand = new QueryCommand({
+      TableName: "QuizTable",
+      KeyConditionExpression: "pk = :pk AND begins_with(sk, :skPrefix)",
+      ExpressionAttributeValues: {
+        ":pk": { S: `QUIZ#${quizId}` },
+        ":skPrefix": { S: "QUESTION#" },
+      },
+    });
+
+    const questionsResult = await client.send(queryQuestionsCommand);
+
+    for (const item of questionsResult.Items) {
+      const deleteQuestionCommand = new DeleteItemCommand({
+        TableName: "QuizTable",
+        Key: {
+          pk: { S: item.pk.S },
+          sk: { S: item.sk.S },
+        },
+      });
+
+      await client.send(deleteQuestionCommand);
+    }
+
+    //////
+
     return {
       statusCode: 200,
       body: JSON.stringify({
@@ -76,6 +106,6 @@ const deleteQuizHandler = async (event) => {
 
 export const handler = middy(deleteQuizHandler)
   .use(verifyToken())
-  .use(httpJsonBodyParser())
+  // .use(httpJsonBodyParser())
   .use(validator({ eventSchema: transpileSchema(deleteQuizSchema) }))
   .use(errorHandler());

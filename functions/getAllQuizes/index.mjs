@@ -1,11 +1,7 @@
 import createError from "http-errors";
 import { errorHandler } from "../../middlewares/errorHandler.mjs";
 import { client } from "../../utils/dbClient.mjs";
-import {
-  GetItemCommand,
-  PutItemCommand,
-  QueryCommand,
-} from "@aws-sdk/client-dynamodb";
+import { QueryCommand } from "@aws-sdk/client-dynamodb";
 import middy from "@middy/core";
 
 const getAllQuizzesHandler = async (event) => {

@@ -56,14 +56,12 @@ functions:
       - http:
           path: /api/quiz/{quizId}
           method: get
-  # här...
-  #måsta ha userid o skicka in samtidigt som quizid
 
   deleteQuiz:
     handler: ./functions/deleteQuiz/index.handler
     events:
       - http:
-          path: /api/quiz/{userId}/{quizId}
+          path: /api/quiz/{quizId}
           method: delete
 resources:
   Resources:
