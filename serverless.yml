@@ -67,8 +67,14 @@ functions:
     handler: ./functions/addPoints/index.handler
     events:
       - http:
-          path: /api/quiz/addPoints/{quizId}
+          path: /api/quiz/addPoints
           method: post
+  getScoreBoard:
+    handler: ./functions/getScoreBoard/index.handler
+    events:
+      - http:
+          path: /api/quiz/getScoreBoard/{quizId}
+          method: get
 resources:
   Resources:
     QuizTable:

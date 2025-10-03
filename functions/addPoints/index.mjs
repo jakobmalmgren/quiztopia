@@ -12,8 +12,7 @@ import { verifyToken } from "../../middlewares/authHandler.mjs";
 const addPointHandler = async (event) => {
   try {
     // const { answers, questionId } = event.body;
-    const { answers } = event.body;
-    const { quizId } = event.pathParameters;
+    const { answers, quizId } = event.body;
 
     const userId = event.user.userId;
 
@@ -44,7 +43,7 @@ const addPointHandler = async (event) => {
     //     score++;
     //   }
     // }
-
+    // kolla!
     for (const q of questions) {
       const userAnswer = answers.find(
         (a) => a.questionId === q.sk.S.replace("QUESTION#", "")
@@ -87,5 +86,5 @@ const addPointHandler = async (event) => {
 export const handler = middy(addPointHandler)
   .use(verifyToken())
   .use(httpJsonBodyParser())
-  //   .use(validator({ eventSchema: transpileSchema(addPointsSchema) }))
+  .use(validator({ eventSchema: transpileSchema(addPointsSchema) }))
   .use(errorHandler());
