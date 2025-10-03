@@ -7,9 +7,33 @@ provider:
   name: aws
   runtime: nodejs20.x
   region: eu-north-1
-  role: arn:aws:iam::791493234438:role/cloudPushRole
-  # tillfällig roll
-  #policy ska ja skapa här med sen!!
+  # Här är min policy för DynamoDB
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:GetItem # Hämta ett enskilt item med PK + SK
+        - dynamodb:PutItem # Lägga till ett nytt item
+        - dynamodb:Query # Göra en Query
+        - dynamodb:DeleteItem # Ta bort ett item
+
+      Resource:
+        - arn:aws:dynamodb:eu-north-1:791493234438:table/QuizTable
+      # Här ger jag access till indexet
+    - Effect: Allow
+      Action:
+        - dynamodb:Query # Query mot index
+      Resource:
+        - arn:aws:dynamodb:eu-north-1:791493234438:table/QuizTable/index/EntityTypeIndex
+      # Här ger jag access till CloudWatch loggar
+    - Effect: Allow
+      Action:
+        - logs:CreateLogGroup # Skapa en logg-grupp
+        - logs:CreateLogStream # Skapa en ny logg-stream
+        - logs:PutLogEvents # Skriva faktiska logg-meddelanden (console.log, errors, etc.)
+      Resource: "*"
+  #-------------
+
+  # role: arn:aws:iam::791493234438:role/cloudPushRole
   # Uncomment to easily set up a custom domain. Read the docs for more details:
   # https://www.serverless.com/framework/docs/providers/aws/guide/domains
   # domain: api.example.com

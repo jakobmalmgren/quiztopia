@@ -10,6 +10,52 @@ authorName: 'Serverless, Inc.'
 authorAvatar: 'https://avatars1.githubusercontent.com/u/13742415?s=200&v=4'
 -->
 
+# how to use all the routes:
+
+![signup](./images/signUp.png)
+POST - https://mrgad166j0.execute-api.eu-north-1.amazonaws.com/dev/api/auth/signup
+
+![login](./images/logIn.png)
+POST - https://mrgad166j0.execute-api.eu-north-1.amazonaws.com/dev/api/auth/login
+
+- that token gonna go in to authorization in the header
+
+![addQuiz](./images/createQuiz.png)
+POST - https://mrgad166j0.execute-api.eu-north-1.amazonaws.com/dev/api/quiz
+
+![addQuestiontoQuiz part 1](./images/addQuestionBefore.png)
+POST - https://mrgad166j0.execute-api.eu-north-1.amazonaws.com/dev/api/quiz/question
+
+- this shows that i need that specific ID when I create a Quiz to add quiz questions
+
+![addQuestiontoQuiz part 2](./images/addQuestionafter.png)
+
+- this is the response I get back
+
+![getAllQuizzes](./images/getAllQuizes.png)
+GET - https://mrgad166j0.execute-api.eu-north-1.amazonaws.com/dev/api/quiz
+
+![getSpecificQuiz](./images/getSpecificQuiz.png)
+GET - https://mrgad166j0.execute-api.eu-north-1.amazonaws.com/dev/api/quiz/{quizId}
+
+- the quizId is gonna go into the pathParameter & userId into the querystring.
+
+![deleteQuiz](./images/deletedQuiz.png)
+DELETE - https://mrgad166j0.execute-api.eu-north-1.amazonaws.com/dev/api/quiz/{quizId}
+
+- the quizId is gonna go into the pathParameteter.
+
+![addPoints](./images/addingScore.png)
+POST - https://mrgad166j0.execute-api.eu-north-1.amazonaws.com/dev/api/quiz/addPoints
+
+- answer and quizId is from the event.body then userId come from verifytoken (event.user.userId)
+  then the specific questionId:s are from questions linked to the quizId. the answers then compares to the correct ones and right - 1p wrong 0p
+
+![getScoreBoard](./images/getScoreBoard.png)
+GET - https://mrgad166j0.execute-api.eu-north-1.amazonaws.com/dev/api/quiz/getScoreBoard/{quizId}
+
+-the quizId gonna go into the pathParameter, then it will get the scoreboard and only show the top 5
+
 # Serverless Framework Node HTTP API on AWS
 
 This template demonstrates how to make a simple HTTP API with Node.js running on AWS Lambda and API Gateway using the Serverless Framework.
