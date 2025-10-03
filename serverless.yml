@@ -122,7 +122,6 @@ resources:
             KeySchema:
               - AttributeName: entityType
                 KeyType: HASH
-              # Sort key är valfri, t.ex. sk eller quizName
             Projection:
               ProjectionType: ALL
         BillingMode: PAY_PER_REQUEST
